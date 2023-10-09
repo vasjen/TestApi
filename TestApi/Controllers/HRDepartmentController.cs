@@ -21,9 +21,10 @@ namespace TestApi.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Work> Get()
+        public async Task<IActionResult> StartShift()
         {
-            return new List<Work>();
+            var employ
+            return Ok();
         }
     }
 }
