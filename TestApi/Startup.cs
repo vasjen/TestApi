@@ -1,18 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using TestApi.Data;
+using TestApi.Services;
 
 namespace TestApi
 {
@@ -35,6 +29,8 @@ namespace TestApi
                 config.UseSqlite(connection);
             });
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "TestApi", Version = "v1" }); });
+            services.AddScoped<IShiftService, ShiftService>();
+            services.AddScoped<IHRService, HRService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

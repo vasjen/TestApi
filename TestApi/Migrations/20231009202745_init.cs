@@ -13,8 +13,8 @@ namespace TestApi.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    SurName = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    SurName = table.Column<string>(type: "TEXT", nullable: false),
                     MiddleName = table.Column<string>(type: "TEXT", nullable: true),
                     Position = table.Column<int>(type: "INTEGER", nullable: false)
                 },
