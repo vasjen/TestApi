@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using TestApi.Models;
 using TestApi.Services;
 
@@ -10,15 +9,13 @@ namespace TestApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class HRDepartmentController : ControllerBase
+    public class HrDepartmentController : ControllerBase
     {
         
-        private readonly ILogger<HRDepartmentController> _logger;
         private readonly IHRService _hrService;
 
-        public HRDepartmentController(ILogger<HRDepartmentController> logger, IHRService hrService)
+        public HrDepartmentController(IHRService hrService)
         {
-            _logger = logger;
             _hrService = hrService;
         }
         
@@ -62,14 +59,16 @@ namespace TestApi.Controllers
         
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesErrorResponseType(typeof(BadRequestResult))]
         public async Task<IActionResult> UpdateEmployee(EmployeeUpdateRequest request)
         {
             if (!await _hrService.EmployeeIsExist(request.EmployeeId))
-                return NotFound($"Employee with ID {request.EmployeeId} is not exist");
+                return BadRequest($"Employee with ID {request.EmployeeId} is not exist");
             
-            if (request.Name is null || request.MiddleName is null || request.Position == null)
+            if (!_hrService.PositionIsExist(request.Position))
+                return BadRequest($"Position {request.Position} is not exist");
+            
+            if (string.IsNullOrEmpty(request.Name) || string.IsNullOrEmpty(request.SurName))
                 return BadRequest("One or more fields is null");
             
             var employee = await _hrService.UpdateEmployee(request);
@@ -78,11 +77,11 @@ namespace TestApi.Controllers
         
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesErrorResponseType(typeof(BadRequestResult))]
         public async Task<IActionResult> DeleteEmployee(EmployeeDeleteRequest request)
         {
             if (!await _hrService.EmployeeIsExist(request.EmployeeId))
-                return NotFound($"Employee with ID {request.EmployeeId} is not exist");
+                return BadRequest($"Employee with ID {request.EmployeeId} is not exist");
             
             await _hrService.DeleteEmployee(request);
             return Ok();
